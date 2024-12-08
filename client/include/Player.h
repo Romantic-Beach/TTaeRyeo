@@ -2,26 +2,33 @@
 #define PLAYER_H
 
 #include <SDL2/SDL.h>
-#include <stdbool.h>
-#include <cmath>
+#include <vector>
+#include "Bullet.h"
 
-// 캐릭터 구조체
-typedef struct
+class Player
 {
-  float x, y;   // 캐릭터의 좌표
-  float vx, vy; // 캐릭터의 속도
-} Character;
+public:
+  Player();
+  Player(int x, int y, int id);
+  void handleInput(const SDL_Event &event, std::vector<Bullet> &bullets);
+  void update();
+  void render(SDL_Renderer *renderer);
+  void shoot(std::vector<Bullet> &bullets); // 🔥 shoot 메서드에 bullets 전달
 
-// 입력 처리 함수
-void characterHandleInput(
-    bool *running,          // 실행 여부
-    Character *character,   // 캐릭터
-    const int screenWidth,  // 창의 너비
-    const int screenHeight, // 창의 높이
-    float deltaTime         // 경과 시간 (초)
-);
+private:
+  int x, y;                    // 플레이어의 위치
+  int width = 50, height = 50; // 플레이어의 크기
+  int playerId;                // 1P 또는 2P를 나타냄
+  int health = 3;              // 플레이어의 체력
 
-// 캐릭터 렌더링 함수
-void renderCharacter(SDL_Renderer *renderer, Character *character);
+  // 🔥 속도 추가 (velocity)
+  int velocityX = 0;      // x축 속도
+  int velocityY = 0;      // y축 속도
+  const int maxSpeed = 5; // 플레이어의 최대 속도
 
-#endif // PLAYER_H
+  // 🔥 총알 발사 쿨타임 관리
+  Uint32 lastShotTime = 0;      // 마지막 발사 시간 (ms)
+  const Uint32 fireRate = 1000; // 발사 간격 (1000ms = 1초)
+};
+
+#endif
